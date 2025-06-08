@@ -56,9 +56,9 @@
     <form action="{{ url('/login') }}" method="POST"> {{-- Route to handle login --}}
       @csrf
       <div class="form-group">
-        <label for="username">Username or Email</label> {{-- Typically email or username --}}
-        <input type="text" id="username" name="username" value="{{ old('username') }}" required autofocus>
-        @error('username') <p class="error-message">{{ $message }}</p> @enderror
+        <label for="login">Username or Email</label> {{-- Typically email or username --}}
+        <input type="text" id="login" name="login" value="{{ old('login') }}" required autofocus>
+        @error('login') <p class="error-message">{{ $message }}</p> @enderror
       </div>
       <div class="form-group">
         <label for="password">Password</label>

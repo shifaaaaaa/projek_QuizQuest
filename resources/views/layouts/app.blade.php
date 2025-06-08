@@ -88,9 +88,8 @@
     <nav>
       {{-- Add authentication checks here eventually --}}
       {{-- Example: @auth ... @else ... @endauth --}}
-      <a href="{{ url('/profile') }}">👤 Profile</a>
-      <a href="{{ url('/settings') }}">⚙️ Settings</a>
       <a href="{{ url('/login') }}">Login</a>
+      <button class="toggle-dark" onclick="toggleHomePageDarkMode()">🌙</button>
       {{-- <a href="{{ url('/admin') }}">👑 Admin</a> --}} {{-- Example link to admin panel --}}
     </nav>
   </header>
