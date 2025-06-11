@@ -9,29 +9,41 @@ use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     return view('home');
-});
+})->name('home');
 
 // Route ke halaman Profile
 Route::get('/profile', function () {
-    // sementara, pake data user dummy dulu biar ga error
-    $dummyUser = (object) [
-        'name' => 'Pengguna Saat Ini',
-        'username' => 'pengguna01',
-        'email' => 'pengguna@example.com',
-        'joined_at' => now()->subDays(15),
-        'quizzes_done' => 7
-    ];
-    return view('profile', ['user' => $dummyUser]);
-});
+    $user = Auth::user(); 
+    return view('profile', ['user' => $user]);
+})->middleware('auth')->name('profile');
 
 // Route ke halaman Settings
 Route::get('/settings', function () {
-    $dummyUser = (object) [
-        'username' => 'pengguna01',
-        'email' => 'pengguna@example.com',
-    ];
-    return view('settings', ['user' => $dummyUser]);
-});
+    $user = Auth::user();
+    return view('settings', ['user' => $user]);
+})->middleware('auth')->name('settings');
+
+Route::patch('/settings/update', function (Request $request) {
+    $user = Auth::user();
+    $validatedData = $request->validate([
+        'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+        'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        'password' => 'nullable|string|min:8|confirmed',
+    ]);
+
+    // Update username dan email
+    $user->username = $validatedData['username'];
+    $user->email = $validatedData['email'];
+
+    // Update password hanya jika pengguna memasukkan password baru
+    if (!empty($validatedData['password'])) {
+        $user->password = Hash::make($validatedData['password']);
+    }
+
+    $user->save();
+
+    return redirect()->route('settings')->with('success', 'Pengaturan berhasil diperbarui!');
+})->middleware('auth')->name('settings.update');
 
 // Route ke form Login
 Route::get('/login', function () {
@@ -85,7 +97,6 @@ Route::post('/signup', function (Request $request) {
     
     // Validasi data input
     $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
         'username' => 'required|string|max:255|unique:users,username',
         'email' => 'required|string|email|max:255|unique:users,email',
         'password' => 'required|string|min:8|confirmed',
@@ -94,11 +105,11 @@ Route::post('/signup', function (Request $request) {
     // Buat pengguna baru
     try {
         $user = User::create([
-            'name' => $validatedData['name'],
+            'name' => $validatedData['username'],
             'username' => $validatedData['username'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
-            'is_admin' => false, // Secara default, pengguna baru bukan admin
+            'is_admin' => false,
         ]);
 
         // Langsung login-kan pengguna setelah berhasil registrasi

@@ -86,11 +86,28 @@
   <header class="app-header">
     <a class="logo" href="{{ url('/') }}">QuizQuest</a>
     <nav>
-      {{-- Add authentication checks here eventually --}}
-      {{-- Example: @auth ... @else ... @endauth --}}
-      <a href="{{ url('/login') }}">Login</a>
-      <button class="toggle-dark" onclick="toggleHomePageDarkMode()">🌙</button>
-      {{-- <a href="{{ url('/admin') }}">👑 Admin</a> --}} {{-- Example link to admin panel --}}
+      @guest
+        {{-- Tautan ini hanya akan muncul jika pengguna BELUM login --}}
+        <a href="{{ route('login') }}">Login</a>
+        <a href="{{ route('signup') }}">Signup</a>
+      @endguest
+
+      @auth
+        {{-- Tautan ini hanya akan muncul jika pengguna SUDAH login --}}
+        <span style="color: #7CD9CE; align-self: center;">Halo, {{ Auth::user()->name }}!</span>
+        <a href="{{ url('/profile') }}">👤 Profile</a>
+        <a href="{{ url('/settings') }}">⚙️ Settings</a>
+
+        {{-- Link Logout harus menggunakan form dengan metode POST untuk keamanan --}}
+        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+            @csrf
+            <a href="{{ route('logout') }}" 
+              onclick="event.preventDefault(); this.closest('form').submit();"
+              style="color: white; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 0.3rem;">
+              🚪 Logout
+            </a>
+        </form>
+      @endauth
     </nav>
   </header>
 

@@ -78,8 +78,15 @@
       <div style="color: green; margin-bottom: 1rem; text-align: center;">{{ session('success') }}</div>
     @endif
     
-    @if ($errors->has('error_signup'))
-      <div style="color: red; margin-bottom: 1rem; text-align: center;">{{ $errors->first('error_signup') }}</div>
+    @if ($errors->any())
+        <div style="padding: 1rem; margin-bottom: 1rem; border: 1px solid #f5c6cb; border-radius: .25rem; color: #721c24; background-color: #f8d7da;">
+            <strong>Whoops! Ada yang salah dengan input Anda.</strong><br><br>
+            <ul style="margin-bottom: 0; padding-left: 1.2rem;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
   </div>
 </body>

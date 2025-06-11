@@ -99,11 +99,11 @@
   </div>
   <div class="info-group">
     <label>Joined:</label>
-    <p>{{ $user->joined_at ? $user->joined_at->format('F d, Y') : 'January 12, 2025' }}</p>
+    <p>{{ $user->created_at->format('F d, Y') }}</p>
   </div>
   <div class="info-group">
     <label>Quizzes Done:</label>
-    <p>{{ $user->quizzes_done ?? 5 }}</p>
+    <p>{{ $user->completedQuizzes->count() }}</p>
   </div>
 </div>
 @endsection
