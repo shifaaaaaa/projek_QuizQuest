@@ -82,12 +82,37 @@
   </style>
   @stack('styles')
 </head>
+<<<<<<< HEAD
 <body class="{{ session('darkMode', false) ? 'dark-mode' : '' }}">
 
   {{-- Logika untuk menyertakan partial header yang sesuai --}}
   @guest
     @include('partials.header-guest')
   @endguest
+=======
+<body class="{{ session('darkMode', false) ? 'dark-mode' : '' }}"> {{-- Load dark mode preference from session or default --}}
+  <header class="app-header">
+    <a class="logo" href="{{ url('/') }}">QuizQuest</a>
+    <nav>
+
+      
+
+      @guest
+        {{-- Tautan ini hanya akan muncul jika pengguna BELUM login --}}
+        <a href="{{ route('login') }}">Login</a>
+        <a href="{{ route('signup') }}">Signup</a>
+      @endguest
+
+      
+
+      @auth 
+        {{-- Tautan ini hanya akan muncul jika pengguna SUDAH login --}}
+        <span style="color: #7CD9CE; align-self: center;">Halo, {{ Auth::user()->name }}!</span>
+        <a href="{{ url('/leaderboard') }}">🏆 Leaderboard</a> 
+        <a href="{{ url('/home') }}">🏠 Home</a> 
+        <a href="{{ url('/profile') }}">👤 Profile</a>
+        <a href="{{ url('/settings') }}">⚙️ Settings</a>
+>>>>>>> a63e3e1dde32ede99d54aba0264885e21dd83138
 
   @auth
     @include('partials.header-authenticated')
