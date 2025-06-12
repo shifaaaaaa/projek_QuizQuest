@@ -11,6 +11,10 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
+Route::get('/dashboard', function () {
+    return view('dashboarduser'); // Mengarah ke dashboarduser.blade.php
+})->middleware('auth')->name('dashboard');
+
 // Route ke halaman Profile
 Route::get('/profile', function () {
     $user = Auth::user(); 
@@ -78,7 +82,7 @@ Route::post('/login', function (Request $request) {
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        return redirect()->intended('/'); 
+        return redirect()->intended('/dashboard'); 
     }
 
     return back()->withErrors([
@@ -116,7 +120,7 @@ Route::post('/signup', function (Request $request) {
         Auth::login($user);
 
         // Redirect ke halaman home dengan pesan sukses
-        return redirect('/')->with('success', 'Registrasi berhasil! Selamat datang!');
+        return redirect('/dashboard')->with('success', 'Registrasi berhasil! Selamat datang!');
 
     } catch (\Illuminate\Database\QueryException $e) {
         Log::error('Signup QueryException: ' . $e->getMessage() . ' SQL: ' . $e->getSql() . ' Bindings: ' . implode(', ', $e->getBindings()));
@@ -154,3 +158,4 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return view('admin.quizzes.create');
     })->name('quizzes.create');
 });
+

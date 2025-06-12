@@ -24,7 +24,6 @@
     }
 
     body {
-      /* Default body style, can be overridden by specific page styles */
       background: linear-gradient(to right, var(--bright1), var(--bright3));
       color: #000;
       min-height: 100vh;
@@ -38,7 +37,8 @@
       color: white;
     }
 
-    header.app-header { /* Renamed to avoid conflict if a page has its own header tag */
+    /* Pindahkan gaya header dan nav ke sini atau ke file CSS terpisah */
+    header.app-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -70,7 +70,7 @@
       gap: 0.3rem;
     }
 
-    footer.app-footer { /* Renamed to avoid conflict */
+    footer.app-footer {
       background-color: var(--dark4);
       color: white;
       padding: 1rem;
@@ -80,36 +80,18 @@
       margin-top: auto;
     }
   </style>
-  @stack('styles') {{-- For page-specific styles --}}
+  @stack('styles')
 </head>
-<body class="{{ session('darkMode', false) ? 'dark-mode' : '' }}"> {{-- Load dark mode preference from session or default --}}
-  <header class="app-header">
-    <a class="logo" href="{{ url('/') }}">QuizQuest</a>
-    <nav>
-      @guest
-        {{-- Tautan ini hanya akan muncul jika pengguna BELUM login --}}
-        <a href="{{ route('login') }}">Login</a>
-        <a href="{{ route('signup') }}">Signup</a>
-      @endguest
+<body class="{{ session('darkMode', false) ? 'dark-mode' : '' }}">
 
-      @auth
-        {{-- Tautan ini hanya akan muncul jika pengguna SUDAH login --}}
-        <span style="color: #7CD9CE; align-self: center;">Halo, {{ Auth::user()->name }}!</span>
-        <a href="{{ url('/profile') }}">👤 Profile</a>
-        <a href="{{ url('/settings') }}">⚙️ Settings</a>
+  {{-- Logika untuk menyertakan partial header yang sesuai --}}
+  @guest
+    @include('partials.header-guest')
+  @endguest
 
-        {{-- Link Logout harus menggunakan form dengan metode POST untuk keamanan --}}
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-            @csrf
-            <a href="{{ route('logout') }}" 
-              onclick="event.preventDefault(); this.closest('form').submit();"
-              style="color: white; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 0.3rem;">
-              🚪 Logout
-            </a>
-        </form>
-      @endauth
-    </nav>
-  </header>
+  @auth
+    @include('partials.header-authenticated')
+  @endauth
 
   <main>
     @yield('content')
@@ -120,7 +102,6 @@
   </footer>
 
   <script>
-    // Global dark mode function (if needed, or keep specific to pages)
     function applyDarkModePreference() {
       if (localStorage.getItem('darkMode') === 'true') {
         document.body.classList.add('dark-mode');
@@ -128,15 +109,13 @@
         document.body.classList.remove('dark-mode');
       }
     }
-    // Apply on load
     window.onload = function() {
       applyDarkModePreference();
-      // If specific pages have their own onload, they should call this or integrate
       if (typeof pageOnLoad === 'function') {
         pageOnLoad();
       }
     };
   </script>
-  @stack('scripts') {{-- For page-specific scripts --}}
+  @stack('scripts')
 </body>
 </html>
