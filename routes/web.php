@@ -1,148 +1,156 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
-Route::get('/', function () {
+/*
+|--------------------------------------------------------------------------
+| Public Routes (Bisa diakses semua orang)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/home', function () {
     return view('home');
 })->name('home');
 
-// Route ke halaman Profile
-Route::get('/profile', function () {
-    $user = Auth::user(); 
-    return view('profile', ['user' => $user]);
-})->middleware('auth')->name('profile');
-
-// Route ke halaman Settings
-Route::get('/settings', function () {
-    $user = Auth::user();
-    return view('settings', ['user' => $user]);
-})->middleware('auth')->name('settings');
-
-Route::patch('/settings/update', function (Request $request) {
-    $user = Auth::user();
-    $validatedData = $request->validate([
-        'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-        'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-        'password' => 'nullable|string|min:8|confirmed',
-    ]);
-
-    // Update username dan email
-    $user->username = $validatedData['username'];
-    $user->email = $validatedData['email'];
-
-    // Update password hanya jika pengguna memasukkan password baru
-    if (!empty($validatedData['password'])) {
-        $user->password = Hash::make($validatedData['password']);
-    }
-
-    $user->save();
-
-    return redirect()->route('settings')->with('success', 'Pengaturan berhasil diperbarui!');
-})->middleware('auth')->name('settings.update');
-
-// Route ke form Login
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
-// Route untuk proses login
 Route::post('/login', function (Request $request) {
-    // Debug: Cek data yang diterima
-    Log::info('Login attempt data:', $request->all());
-    
+    Log::info('Login attempt:', $request->all());
+
     $request->validate([
-        'login' => 'required|string', 
+        'login' => 'required|string',
         'password' => 'required|string',
     ]);
 
-    // Tentukan apakah input adalah email atau username
     $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-    
+
     $credentials = [
         $loginField => $request->login,
         'password' => $request->password
     ];
 
-    Log::info('Login credentials:', $credentials);
+    if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        $request->session()->regenerate();
 
-    if (Auth::attempt($credentials, $request->boolean('remember'))) { 
-        $request->session()->regenerate(); 
-
-        // Cek apakah pengguna adalah admin
-        if (Auth::user()->is_admin) { 
-            return redirect()->intended(route('admin.dashboard'));
-        }
-
-        return redirect()->intended('/'); 
+        return Auth::user()->is_admin
+            ? redirect()->intended(route('admin.dashboard'))
+            : redirect()->intended(route('home'));
     }
 
     return back()->withErrors([
-        'login' => 'Username/email atau password salah.', 
-    ])->onlyInput('login'); 
+        'login' => 'Username/email atau password salah.',
+    ])->onlyInput('login');
 });
 
-// Route ke form Signup/Register
 Route::get('/signup', function () {
     return view('auth.signup');
 })->name('signup');
 
 Route::post('/signup', function (Request $request) {
-    // Debug: Cek data yang diterima
-    Log::info('Signup attempt data:', $request->all());
-    
-    // Validasi data input
-    $validatedData = $request->validate([
+    Log::info('Signup attempt:', $request->all());
+
+    $validated = $request->validate([
         'username' => 'required|string|max:255|unique:users,username',
         'email' => 'required|string|email|max:255|unique:users,email',
         'password' => 'required|string|min:8|confirmed',
     ]);
 
-    // Buat pengguna baru
     try {
         $user = User::create([
-            'name' => $validatedData['username'],
-            'username' => $validatedData['username'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
+            'name' => $validated['username'],
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
             'is_admin' => false,
         ]);
 
-        // Langsung login-kan pengguna setelah berhasil registrasi
         Auth::login($user);
-
-        // Redirect ke halaman home dengan pesan sukses
         return redirect('/')->with('success', 'Registrasi berhasil! Selamat datang!');
-
-    } catch (\Illuminate\Database\QueryException $e) {
-        Log::error('Signup QueryException: ' . $e->getMessage() . ' SQL: ' . $e->getSql() . ' Bindings: ' . implode(', ', $e->getBindings()));
-        return back()->withInput()->withErrors(['error_signup' => 'Gagal mendaftarkan pengguna. Username atau email mungkin sudah digunakan.']);
     } catch (\Exception $e) {
-        Log::error('Signup General Exception: ' . $e->getMessage());
-        return back()->withInput()->withErrors(['error_signup' => 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.']);
+        Log::error('Signup error: ' . $e->getMessage());
+        return back()->withInput()->withErrors(['error_signup' => 'Terjadi kesalahan saat mendaftar.']);
     }
 });
 
-// Route untuk logout
 Route::post('/logout', function (Request $request) {
     Auth::logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    
     return redirect('/');
 })->name('logout');
 
-// Route ke halaman Admin 
+
+
+/*
+|--------------------------------------------------------------------------
+| User Routes (Harus login)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/profile', function () {
+        return view('profile', ['user' => Auth::user()]);
+    })->name('profile');
+
+    Route::get('/settings', function () {
+        return view('settings', ['user' => Auth::user()]);
+    })->name('settings');
+
+    Route::patch('/settings/update', function (Request $request) {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user->username = $validated['username'];
+        $user->email = $validated['email'];
+
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        return redirect()->route('settings')->with('success', 'Pengaturan berhasil diperbarui!');
+    })->name('settings.update');
+
+    //  Leaderboard untuk user login biasa
+    Route::get('/leaderboard', function () {
+        $leaders = [
+            (object)['name' => 'User1', 'score' => 9800],
+            (object)['name' => 'UserDua', 'score' => 9500],
+            (object)['name' => 'UserE', 'score' => 9400],
+            (object)['name' => 'UserIV', 'score' => 9200],
+            (object)['name' => 'UserV', 'score' => 9100],
+        ];
+        return view('leaderboard', ['leaders' => $leaders]);
+    })->name('leaderboard');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes (Hanya untuk admin)
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
 
-    Route::get('/quizzes', function() {
+    Route::get('/quizzes', function () {
         $dummyQuizzes = [
             (object)['id' => 1, 'title' => 'Dasar Matematika', 'description' => 'Kuis sederhana tentang aritmatika.'],
             (object)['id' => 2, 'title' => 'Fakta Sains', 'description' => 'Uji pengetahuan sains umum Anda.'],
@@ -150,7 +158,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return view('admin.quizzes.index', ['quizzes' => $dummyQuizzes]);
     })->name('quizzes.index');
 
-    Route::get('/quizzes/create', function() {
+    Route::get('/quizzes/create', function () {
         return view('admin.quizzes.create');
     })->name('quizzes.create');
 });
