@@ -1,3 +1,4 @@
+
 <?php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -13,10 +14,6 @@ use App\Models\User;
 */
 
 Route::get('/', function () {
-    return view('home');
-})->name('home');
-
-Route::get('/home', function () {
     return view('home');
 })->name('home');
 
@@ -98,7 +95,6 @@ Route::post('/logout', function (Request $request) {
 */
 
 Route::middleware('auth')->group(function () {
-
     Route::get('/profile', function () {
         return view('profile', ['user' => Auth::user()]);
     })->name('profile');
@@ -128,16 +124,30 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('settings')->with('success', 'Pengaturan berhasil diperbarui!');
     })->name('settings.update');
 
-    //  Leaderboard untuk user login biasa
+    Route::get('/dashboard', function () {
+    return view('dashboarduser'); // Mengarah ke dashboarduser.blade.php
+    })->middleware('auth')->name('dashboard');
+
     Route::get('/leaderboard', function () {
-        $leaders = [
-            (object)['name' => 'User1', 'score' => 9800],
-            (object)['name' => 'UserDua', 'score' => 9500],
-            (object)['name' => 'UserE', 'score' => 9400],
-            (object)['name' => 'UserIV', 'score' => 9200],
-            (object)['name' => 'UserV', 'score' => 9100],
-        ];
-        return view('leaderboard', ['leaders' => $leaders]);
+    $leaders = collect([
+        (object)['name' => 'Layla', 'score' => 900],
+        (object)['name' => 'Nara', 'score' => 9500],
+        (object)['name' => 'Zaki', 'score' => 9400],
+        (object)['name' => 'Rendi', 'score' => 9200],
+        (object)['name' => 'Maya', 'score' => 9100],
+        (object)['name' => 'Alice', 'score' => 1000],
+        (object)['name' => 'Bob', 'score' => 950],
+        (object)['name' => 'Charlie', 'score' => 900],
+        (object)['name' => 'Diana', 'score' => 870],
+        (object)['name' => 'Ethan', 'score' => 850],
+        (object)['name' => 'Fiona', 'score' => 830],
+        (object)['name' => 'George', 'score' => 800],
+        (object)['name' => 'Hannah', 'score' => 780],
+        (object)['name' => 'Ian', 'score' => 750],
+        (object)['name' => 'Julia', 'score' => 720],
+    ])->sortByDesc('score')->values(); // sort dan reset index
+
+    return view('leaderboard', ['leaders' => $leaders]);
     })->name('leaderboard');
 });
 
@@ -149,7 +159,6 @@ Route::middleware('auth')->group(function () {
 */
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
