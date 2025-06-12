@@ -41,7 +41,7 @@ Route::post('/login', function (Request $request) {
 
         return Auth::user()->is_admin
             ? redirect()->intended(route('admin.dashboard'))
-            : redirect()->intended(route('home'));
+            : redirect()->intended(route('dashboard'));
     }
 
     return back()->withErrors([
@@ -72,7 +72,7 @@ Route::post('/signup', function (Request $request) {
         ]);
 
         Auth::login($user);
-        return redirect('/')->with('success', 'Registrasi berhasil! Selamat datang!');
+        return redirect('/dashboard')->with('success', 'Registrasi berhasil! Selamat datang!');
     } catch (\Exception $e) {
         Log::error('Signup error: ' . $e->getMessage());
         return back()->withInput()->withErrors(['error_signup' => 'Terjadi kesalahan saat mendaftar.']);
@@ -175,3 +175,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return view('admin.quizzes.create');
     })->name('quizzes.create');
 });
+
+Route::get('/dashboard', function () {
+    return view('dashboarduser'); // Mengarah ke dashboarduser.blade.php
+})->middleware('auth')->name('dashboard');

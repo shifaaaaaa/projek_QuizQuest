@@ -52,7 +52,7 @@
 
   .warning {
     text-align: center;
-    color: #ffc107; /* Using a hex code as it's a common warning color */
+    color: #ffc107;
     margin-top: 1rem;
   }
 </style>

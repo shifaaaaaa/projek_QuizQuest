@@ -38,7 +38,7 @@ class AuthController extends Controller
                 return redirect()->route('admin.dashboard');
             }
 
-            return redirect()->route('welcome')->with('success', 'Login berhasil!');
+            return redirect()->route('dashboard')->with('success', 'Login berhasil!');
         }
 
         return back()->withErrors([
@@ -72,7 +72,7 @@ class AuthController extends Controller
 
         Auth::login($user); // langsung login setelah daftar
 
-        return redirect()->route('welcome')->with('success', 'Registrasi berhasil! Selamat datang!');
+        return redirect()->route('dashboard')->with('success', 'Registrasi berhasil! Selamat datang!');
     }
 
     // Proses logout

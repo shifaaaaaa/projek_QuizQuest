@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'QuizQuest - Home')
+@section('title', 'QuizQuest - Dashboard')
 
 @push('styles')
 <style>
