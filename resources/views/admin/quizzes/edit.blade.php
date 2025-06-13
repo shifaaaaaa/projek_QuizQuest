@@ -1,6 +1,6 @@
 @extends('layouts.app') {{-- Keep extending layouts.app --}}
 
-@section('title', 'Create Quiz - Admin QuizQuest')
+@section('title', 'Edit Quiz - Admin QuizQuest')
 
 @push('styles')
 <style>
@@ -223,48 +223,59 @@ body.dark-mode .form-group button:hover {
 @endpush
 
 @section('content')
-<h1 class="create-quiz-title">Create New Quiz</h1>
+<h1 class="create-quiz-title">Edit Quiz</h1>
 <div class="quiz-form">
-  <form action="{{ url('/admin/quizzes') }}" method="POST">
+  <form action="{{ url('/admin/quizzes/' . $quiz->id) }}" method="POST">
     @csrf
+    @method('PUT')
+
     <div class="form-group">
       <label for="title">Quiz Title</label>
-      <input type="text" id="title" name="title" placeholder="Enter quiz title" value="{{ old('title') }}">
+      <input type="text" id="title" name="title" placeholder="Enter quiz title" value="{{ old('title',$quiz->title) }}">
     </div>
 
-        <div class="form-group">
-            <label for="description">Quiz Description</label>
-            <textarea id="description" name="description" rows="3" placeholder="Enter quiz description">{{ old('description') }}</textarea>
-        </div>
+    <div class="form-group">
+      <label for="description">Quiz Description</label>
+      <textarea id="description" name="description" rows="3" placeholder="Enter quiz description">{{ old('description',$quiz->description) }}</textarea>
+    </div>
 
     <div class="question-section" id="questions-container">
-      <div class="question-box">
-        <label for="questions[0][question]">Question 1</label>
-        <textarea name="questions[0][question]" placeholder="Enter your question" class="question-textarea">{{ old('questions.0.question') }}</textarea>    
+      @foreach($quiz->questions as $qIndex => $question)
+        <div class="question-box">
+          <label for="questions[{{ $qIndex }}][question]">Question {{ $qIndex + 1 }}</label>
+          <textarea name="questions[{{ $qIndex }}][question]" placeholder="Enter your question" class="question-textarea">{{ old("questions.{$qIndex}.question", $question->question) }}</textarea>    
 
-        <label>A</label>
-        <textarea name="questions[0][options][A]" placeholder="Option A" class="options-textarea">{{ old('questions.0.options.A') }}</textarea>
-        <label>B</label>
-        <textarea name="questions[0][options][B]" placeholder="Option B" class="options-textarea">{{ old('questions.0.options.B') }}</textarea>
-        <label>C</label>
-        <textarea name="questions[0][options][C]" placeholder="Option C" class="options-textarea">{{ old('questions.0.options.C') }}</textarea>
-        <label>D</label>
-        <textarea name="questions[0][options][D]" placeholder="Option D" class="options-textarea">{{ old('questions.0.options.D') }}</textarea>
-        
-        <label for="questions[0][correct]">Correct Answer</label>
-        <select name="questions[0][correct]">
-          <option value="">Select</option>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-          <option value="D">D</option>
-        </select>
-      </div>
+          <label>A</label>
+          <textarea name="questions[{{ $qIndex }}][options][A]" placeholder="Option A" class="options-textarea">{{ old("questions.{$qIndex}.options.A", $question->choices->firstWhere('choice_key', 'A')->choice ?? '') }}</textarea>
+          <label>B</label>
+          <textarea name="questions[{{ $qIndex }}][options][B]" placeholder="Option B" class="options-textarea">{{ old("questions.{$qIndex}.options.B", $question->choices->firstWhere('choice_key', 'B')->choice ?? '') }}</textarea>
+          <label>C</label>
+          <textarea name="questions[{{ $qIndex }}][options][C]" placeholder="Option C" class="options-textarea">{{ old("questions.{$qIndex}.options.C", $question->choices->firstWhere('choice_key', 'C')->choice ?? '') }}</textarea>
+          <label>D</label>
+          <textarea name="questions[{{ $qIndex }}][options][D]" placeholder="Option D" class="options-textarea">{{ old("questions.{$qIndex}.options.D", $question->choices->firstWhere('choice_key', 'D')->choice ?? '') }}</textarea>
+
+          <label for="questions[{{ $qIndex }}][correct]">Correct Answer</label>
+          <select name="questions[{{ $qIndex }}][correct]">
+            <option value="">Select</option>
+            @foreach(['A', 'B', 'C', 'D'] as $opt)
+              <option value="{{ $opt }}"
+                {{ $question->choices->firstWhere('choice_key',$opt)->is_correct ? 'selected' : '' }}>
+                {{ $opt }}
+              </option>
+            @endforeach
+          </select>
+
+          <button 
+            [type="button" 
+            class="remove-question" 
+            onclick="removeQuestion(this)" >Remove</button>
+        </div>
+      @endforeach
     </div>
 
     <div class="form-group">
       <button type="button" onclick="addQuestion()"
-      style="margin-top: 20px;"
+        style="margin-top: 20px;"
       >+ Add Question</button>
     </div>
 
@@ -277,7 +288,7 @@ body.dark-mode .form-group button:hover {
 
 @push('scripts')
 <script>
-  let questionCount = 1;
+  let questionCount = {{ $quiz->questions->count() }};
 
   function addQuestion() {
     const container = document.getElementById("questions-container");
@@ -287,7 +298,7 @@ body.dark-mode .form-group button:hover {
 
     div.innerHTML = `
       <label for="questions[${questionCount}][question]">Question ${questionCount + 1}</label>
-      <textarea name="questions[${questionCount}][question]" placeholder="Enter your question" class="question-textarea"></textarea>
+      <textarea name="questions[${questionCount}][question]" placeholder="Enter your question" class="question-textarea"></textarea>    
 
       <label>A</label>
       <textarea name="questions[${questionCount}][options][A]" placeholder="Option A" class="options-textarea"></textarea>
@@ -297,7 +308,7 @@ body.dark-mode .form-group button:hover {
       <textarea name="questions[${questionCount}][options][C]" placeholder="Option C" class="options-textarea"></textarea>
       <label>D</label>
       <textarea name="questions[${questionCount}][options][D]" placeholder="Option D" class="options-textarea"></textarea>
-      
+
       <label for="questions[${questionCount}][correct]">Correct Answer</label>
       <select name="questions[${questionCount}][correct]">
         <option value="">Select</option>
@@ -319,18 +330,27 @@ body.dark-mode .form-group button:hover {
   }
 
   function reindexQuestions(){
-    const questions = document.querySelectorAll('.question-box');
-    questionCount = questions.length;
+  const questions = document.querySelectorAll('.question-box');
+  questionCount = questions.length;
 
-    questions.forEach((questionBox, index) => {
-      questionBox.querySelector('label[for^="questions"]').innerHTML = `Question ${index + 1}`;
+  questions.forEach((questionBox, index) => {
+    // Update label
+    questionBox.querySelector('label').innerHTML = `Question ${index + 1}`;
 
-      // Update all name attributes to match the new index
-      questionBox.querySelectorAll('textarea, select').forEach(el => {
-        const name = el.name;
-        el.name = name.replace(/\[(\d+)\]/, '[' + index + ']');
-      });
+    // Update name attributes
+    questionBox.querySelectorAll('textarea, select').forEach(el => {
+      const name = el.name;
+      el.name = name.replace(/\[(\d+)\]/, '[' + index + ']');
     });
-  }
+
+    // Enable or disable remove button
+    const removeBtn = questionBox.querySelector('.remove-question');
+    if (questionCount <= 1) {
+      removeBtn.style.display = 'none' ;
+    } else {
+      removeBtn.style.display = '';
+    }
+  });
+}
 </script>
 @endpush

@@ -172,6 +172,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::post('/quizzes', [QuizController::class, 'store'])
     ->name('quiz.store');
+
+    Route::get('/quizzes/{id}/edit', [QuizController::class, 'edit'])
+    ->name('quiz.edit');
+
+    Route::put('/quizzes/{id}', [QuizController::class, 'update'])
+    ->name('quiz.update');
+
+    Route::delete('quizzes/{quiz}', [QuizController::class, 'destroy']);
 });
 
 Route::get('/dashboard', function () {

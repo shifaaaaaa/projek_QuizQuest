@@ -163,25 +163,6 @@
             </div>
         </div>
     @empty
-        {{-- Placeholder data if $quizzes is empty or not provided --}}
-        <div class="quiz-card">
-            <h3>Math Basics</h3>
-            <p>A simple quiz on arithmetic and numbers.</p>
-            <div class="quiz-actions">
-                <a href="#" class="button-link edit">Edit</a>
-                <a href="#" class="button-link view">View</a>
-                <button type="button" class="delete">Delete</button>
-            </div>
-        </div>
-        <div class="quiz-card">
-            <h3>Science Facts</h3>
-            <p>Test your general science knowledge.</p>
-            <div class="quiz-actions">
-                <a href="#" class="button-link edit">Edit</a>
-                <a href="#" class="button-link view">View</a>
-                <button type="button" class="delete">Delete</button>
-            </div>
-        </div>
            <p>No quizzes found.</p>
     @endforelse
 </div>

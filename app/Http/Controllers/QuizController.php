@@ -12,7 +12,6 @@ class QuizController extends Controller
     public function index()
     {
         $quizzes = Quiz::all();
-
         return view('admin.quizzes.index', ['quizzes' => $quizzes]);
     }
 
@@ -58,6 +57,46 @@ class QuizController extends Controller
         }
 
         return redirect('/admin/quizzes')->with('success', 'Quiz successfully created');
+    }
+
+    public function edit($id)
+    {
+        $quiz = Quiz::with('questions.choices')->findOrFail($id);
+        return view('admin.quizzes.edit', compact('quiz'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $quiz = Quiz::findOrFail($id);
+        $quiz->update([
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+        ]);
+
+        $quiz->questions()->delete();
+
+        foreach ($request->input('questions') as $questionData) {
+            $question = $quiz->questions()->create([
+                'question' => $questionData['question'],
+            ]);
+
+            foreach ($questionData['options'] as $key => $choiceText) {
+                $question->choices()->create([
+                    'choice_key' => $key,
+                    'choice' => $choiceText,
+                    'is_correct' => ($questionData['correct'] == $key),
+                ]);
+            }
+        }
+        
+        return redirect('/admin/quizzes')->with('success', 'Quiz updated successfully');
+    }
+
+    public function destroy(Quiz $quiz)
+    {
+        $quiz->delete();
+
+        return redirect('/admin/quizzes')->with('success', 'Quiz berhasil dihapus');
     }
 }
 

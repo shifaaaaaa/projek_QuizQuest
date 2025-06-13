@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('quiz_id')->constrained()->onDelete('cascade'); // Relasi -> quizzes
             $table->text('question'); // Soal
-            $table->string('correct'); // Jawaban yang benar ('A', 'B', 'C', 'D')
+            $table->char('correct', 1)->default('A'); // Jawaban yang benar ('A', 'B', 'C', 'D')
             $table->timestamps();
         });
     }
