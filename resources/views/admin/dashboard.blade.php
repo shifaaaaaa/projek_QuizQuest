@@ -5,16 +5,19 @@
 @push('styles')
 <style>
   body {
-    background: linear-gradient(to right, var(--dark3), var(--dark4)) !important;
+    margin: 0;
     color: white !important;
-    padding: 2rem; 
+    background: linear-gradient(to right, var(--dark3), var(--dark4)) !important;
     min-height: 100vh;
-    display:block;
-  }
+    display: flex;
+    flex-direction: column;
+    font-family:'Quicksand', sans-serif;
+}
 
 
   .admin-panel-title { 
     text-align: center;
+    margin-top: 2rem;
     margin-bottom: 2rem;
     color: white; 
   }
@@ -25,7 +28,9 @@
     border-radius: 12px;
     max-width: 800px;
     margin: auto;
+    flex: 1; 
   }
+
 
   .admin-section {
     margin-bottom: 2rem;

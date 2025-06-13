@@ -38,7 +38,7 @@ class AuthController extends Controller
                 return redirect()->route('admin.dashboard');
             }
 
-            return redirect()->route('welcome')->with('success', 'Login berhasil!');
+            return redirect()->route('dashboard')->with('success', 'Login berhasil!');
         }
 
         return back()->withErrors([
