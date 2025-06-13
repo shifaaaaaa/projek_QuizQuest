@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Http\Controllers\QuizController;
 
 /*
 |--------------------------------------------------------------------------
@@ -163,17 +164,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return view('admin.dashboard');
     })->name('dashboard');
 
-    Route::get('/quizzes', function () {
-        $dummyQuizzes = [
-            (object)['id' => 1, 'title' => 'Dasar Matematika', 'description' => 'Kuis sederhana tentang aritmatika.'],
-            (object)['id' => 2, 'title' => 'Fakta Sains', 'description' => 'Uji pengetahuan sains umum Anda.'],
-        ];
-        return view('admin.quizzes.index', ['quizzes' => $dummyQuizzes]);
-    })->name('quizzes.index');
+    Route::get('/quizzes', [QuizController::class, 'index'])
+    ->name('quizzes.index');
 
-    Route::get('/quizzes/create', function () {
-        return view('admin.quizzes.create');
-    })->name('quizzes.create');
+    Route::get('/quizzes/create', [QuizController::class, 'create'])
+    ->name('quiz.create'); 
+
+    Route::post('/quizzes', [QuizController::class, 'store'])
+    ->name('quiz.store');
 });
 
 Route::get('/dashboard', function () {
