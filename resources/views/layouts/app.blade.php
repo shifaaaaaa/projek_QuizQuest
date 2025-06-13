@@ -90,7 +90,11 @@
     @endguest
 
     @auth
-      @include('partials.header-authenticated')
+      @if (Auth::user()->is_admin)
+          @include('partials.header-admin')
+      @else
+          @include('partials.header-authenticated')
+      @endif
     @endauth
 
   <main>
