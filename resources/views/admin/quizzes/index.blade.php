@@ -154,7 +154,7 @@
             <p>{{ $quiz->description ?? 'Sample quiz description.' }}</p>
             <div class="quiz-actions">
                 <a href="{{ url('/admin/quizzes/' . ($quiz->id ?? '#') . '/edit') }}" class="button-link edit">Edit</a>
-                <a href="{{ url('/admin/quizzes/' . ($quiz->id ?? '#')) }}" class="button-link view">View</a>
+                <a href="{{ route('quiz.preview', ['id' => $quiz->id]) }}" class="button-link view">View</a>
                 <form action="{{ url('/admin/quizzes/' . ($quiz->id ?? '#')) }}" method="POST" style="display: contents;">
                     @csrf
                     @method('DELETE')

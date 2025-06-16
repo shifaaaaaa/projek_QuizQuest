@@ -236,16 +236,19 @@ body.dark-mode .form-group button:hover {
       <textarea id="description" name="description" disabled>{{ $quiz->description }}</textarea>
     </div>
 
-    </div>
-    <p>Jumlah soal: {{ $question_count }}</p>
-    </div>
-
-    <div class="form-group" style="text-align: center">
-      <button type="submit">Start Quiz</button>
+    <div class="form-group">
+        <label for="question_count">Jumlah Soal</label>
+        <input type="number" id="question_count" name="question_count" disabled value="{{ $question_count }}">
     </div>
 
-    <div class="form-group" style="text-align: center">
-      <a href="{{ route('admin.quizzes.index') }}">Back</a>
-    </div>
+    <div class="form-group" style="text-align: center; display: flex; justify-content: center; gap: 40px">
+    @if (!Auth::user()->is_admin)
+        <button type="submit">Start Quiz</button>  {{-- apabila admin yang lihat tdk ada tombol start --}}
+    @endif
+    
+    <a href="{{ Auth::user()->is_admin ? route('admin.quizzes.index') : url('/browse') }}">
+        <button type="button">Back</button>
+    </a>
+</div>
 </div>
 @endsection

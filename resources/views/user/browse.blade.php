@@ -153,7 +153,7 @@
             <h3>{{ $quiz->title ?? 'Sample Quiz Title' }}</h3>
             <p>{{ $quiz->description ?? 'Sample quiz description.' }}</p>
             <div class="quiz-actions">
-                <a href="{{ route('quiz.preview', ['id' => $quiz->id]) }}" class="button-link view">Lihat Quiz</a>
+                <a href="{{ route('quiz.preview', ['id' => $quiz->id]) }}" class="button-link view">View</a>
             </div>
         </div>
     @empty
