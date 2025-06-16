@@ -2,6 +2,7 @@
     <a class="logo" href="{{ url('/dashboard') }}">QuizQuest</a>
     <nav>
     <span style="color: #7CD9CE; align-self: center;">Halo, {{ Auth::user()->name }}!</span>
+    <a href="{{ url('/browse') }}">🔍 Browse Quiz</a> 
     <a href="{{ url('/leaderboard') }}">🏆 Leaderboard</a> 
     <a href="{{ url('/profile') }}">👤 Profile</a>
     <a href="{{ url('/settings') }}">⚙️ Settings</a>

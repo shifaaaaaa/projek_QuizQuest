@@ -12,7 +12,12 @@ class QuizController extends Controller
     public function index()
     {
         $quizzes = Quiz::all();
-        return view('admin.quizzes.index', ['quizzes' => $quizzes]);
+
+        if (auth()->user()->is_admin) {
+            return view('admin.quizzes.index', ['quizzes' => $quizzes]);
+        } else {
+            return view('user.browse', ['quizzes' => $quizzes]);
+        }
     }
 
     public function create()

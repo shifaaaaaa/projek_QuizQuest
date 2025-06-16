@@ -146,10 +146,13 @@ Route::middleware('auth')->group(function () {
         (object)['name' => 'Hannah', 'score' => 780],
         (object)['name' => 'Ian', 'score' => 750],
         (object)['name' => 'Julia', 'score' => 720],
-    ])->sortByDesc('score')->values(); // sort dan reset index
+    ])->sortByDesc('score')->values();
 
     return view('leaderboard', ['leaders' => $leaders]);
     })->name('leaderboard');
+
+    Route::get('/browse', [QuizController::class, 'index'])
+    ->name('browse');
 });
 
 
@@ -181,7 +184,3 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::delete('quizzes/{quiz}', [QuizController::class, 'destroy']);
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboarduser'); // Mengarah ke dashboarduser.blade.php
-})->middleware('auth')->name('dashboard');
