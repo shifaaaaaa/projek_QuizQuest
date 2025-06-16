@@ -153,6 +153,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/browse', [QuizController::class, 'index'])
     ->name('browse');
+
+    Route::get('/quiz/preview/{id}', [QuizController::class, 'preview'])
+    ->name('quiz.preview'); 
+
 });
 
 

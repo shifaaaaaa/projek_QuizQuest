@@ -20,6 +20,16 @@ class QuizController extends Controller
         }
     }
 
+    public function preview($id)
+    {
+        $quiz = Quiz::findOrFail($id);
+        $question_count = $quiz->questions()->count();
+        return view('quiz.preview', [
+            'quiz' => $quiz,
+            'question_count' => $question_count
+        ]);
+    }
+
     public function create()
     {
         return view('admin.quizzes.create'); 
