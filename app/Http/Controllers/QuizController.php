@@ -200,4 +200,5 @@ class QuizController extends Controller
         $quiz->delete();
         return redirect()->route('admin.quizzes.index')->with('success', 'Quiz berhasil dihapus');
     }
+    //coba ini bisa ngga ya
 }
