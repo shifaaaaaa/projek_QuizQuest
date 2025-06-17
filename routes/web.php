@@ -15,7 +15,7 @@ use App\Http\Controllers\QuizController;
 */
 
 Route::get('/', function () {
-    return view('home'); // ubah jika ingin ganti landing page
+    return view('home');
 })->name('home');
 
 Route::get('/login', function () {
@@ -163,6 +163,7 @@ Route::middleware('auth')->group(function () {
 | Admin Routes (Auth + Admin Middleware)
 |--------------------------------------------------------------------------
 */
+
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
