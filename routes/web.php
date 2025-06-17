@@ -152,7 +152,7 @@ Route::middleware('auth')->group(function () {
     // Quiz user routes
     Route::get('/browse', [QuizController::class, 'index'])->name('user.browse');
     Route::get('/quiz/{id}/preview', [QuizController::class, 'preview'])->name('quiz.preview');
-    Route::get('/quiz/{id}/start', [QuizController::class, 'start'])->name('quiz.start');
+    Route::get('/quizzes/{quiz}/start', [QuizController::class, 'start'])->name('quiz.start')->middleware('auth');
     Route::post('/quiz/{id}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
     Route::get('/quiz/result/{id}', [QuizController::class, 'result'])->name('quiz.result');
     Route::get('/history', [QuizController::class, 'history'])->name('user.history');

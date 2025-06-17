@@ -225,12 +225,12 @@ body.dark-mode .choice-option.selected {
             <div class="question-text">{{ $question->question }}</div>
             
             @foreach($question->choices as $choice)
-            <label class="choice-option" for="q{{ $question->id }}_{{ $choice->choice_key }}">
+            <label class="choice-option" for="choice-{{ $choice->id }}">
                 <input type="radio" 
-                       name="answers[{{ $question->id }}]" 
-                       value="{{ $choice->choice_key }}" 
-                       id="q{{ $question->id }}_{{ $choice->choice_key }}"
-                       onchange="markAnswered({{ $index + 1 }})">
+                    name="answers[{{ $question->id }}]" 
+                    value="{{ $choice->id }}"
+                    id="choice-{{ $choice->id }}"
+                    onchange="markAnswered({{ $index + 1 }})">
                 <strong>{{ $choice->choice_key }}.</strong> {{ $choice->choice }}
             </label>
             @endforeach

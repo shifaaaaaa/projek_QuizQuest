@@ -13,16 +13,22 @@ class QuizController extends Controller
 {
     public function index()
     {
-        $quizzes = Quiz::all();
+        $quizzes = Quiz::latest()->get();
 
-        if (auth()->user()->is_admin) {
-            return view('admin.quizzes.index', ['quizzes' => $quizzes]);
-        } else {
-            return view('user.browse', ['quizzes' => $quizzes]);
+        if (Auth::user()->is_admin) {
+            return view('admin.quizzes.index', compact('quizzes'));
         }
+
+        $userResults = QuizResult::where('user_id', Auth::id())
+                                 ->pluck('id', 'quiz_id');
+
+        return view('user.browse', [
+            'quizzes' => $quizzes,
+            'userResults' => $userResults
+        ]);
     }
 
-    public function preview($id)
+        public function preview($id)
     {
         $quiz = Quiz::findOrFail($id);
         $question_count = $quiz->questions()->count();
@@ -34,22 +40,15 @@ class QuizController extends Controller
 
     public function start($id)
     {
-        // Debug: cek apakah method ini dipanggil
-        dd("Method start dipanggil dengan ID: " . $id);
-        
         $quiz = Quiz::with('questions.choices')->findOrFail($id);
-        
-        // Debug: tambahkan ini untuk testing
-        // dd($quiz); // uncomment ini untuk debug
-        
-        // Cek apakah user sudah pernah mengerjakan quiz ini
+              
         $existingResult = QuizResult::where('user_id', Auth::id())
-                                   ->where('quiz_id', $id)
-                                   ->first();
+                                      ->where('quiz_id', $id)
+                                      ->first();
         
         if ($existingResult) {
             return redirect()->route('quiz.result', $existingResult->id)
-                           ->with('info', 'Anda sudah pernah mengerjakan kuis ini.');
+                            ->with('info', 'Anda sudah pernah mengerjakan kuis ini.');
         }
 
         return view('quiz.take', compact('quiz'));
@@ -69,7 +68,7 @@ class QuizController extends Controller
         foreach ($quiz->questions as $question) {
             $userAnswer = $answers[$question->id] ?? null;
             $correctChoice = $question->choices->where('is_correct', true)->first();
-            $isCorrect = $userAnswer && $userAnswer == $correctChoice->choice_key;
+            $isCorrect = ($userAnswer !== null && $correctChoice !== null && $userAnswer == $correctChoice->id);
             
             if ($isCorrect) {
                 $correctAnswers++;
@@ -79,7 +78,7 @@ class QuizController extends Controller
                 'question_id' => $question->id,
                 'question' => $question->question,
                 'user_answer' => $userAnswer,
-                'correct_answer' => $correctChoice->choice_key,
+                'correct_answer' => $correctChoice ? $correctChoice->choice_key : null,
                 'is_correct' => $isCorrect
             ];
         }
@@ -104,7 +103,6 @@ class QuizController extends Controller
     {
         $result = QuizResult::with(['quiz', 'user'])->findOrFail($id);
         
-        // Pastikan user hanya bisa melihat hasil mereka sendiri (kecuali admin)
         if (!Auth::user()->is_admin && $result->user_id !== Auth::id()) {
             abort(403, 'Unauthorized access');
         }
@@ -115,9 +113,9 @@ class QuizController extends Controller
     public function history()
     {
         $results = QuizResult::with('quiz')
-                            ->where('user_id', Auth::id())
-                            ->orderBy('completed_at', 'desc')
-                            ->paginate(10);
+                                ->where('user_id', Auth::id())
+                                ->orderBy('completed_at', 'desc')
+                                ->paginate(10);
 
         return view('user.history', compact('results'));
     }
@@ -126,7 +124,7 @@ class QuizController extends Controller
     {
         return view('admin.quizzes.create'); 
     }
-  
+ 
     public function store(Request $request)
     {
         $request->validate([
@@ -147,15 +145,13 @@ class QuizController extends Controller
         ]);
 
         foreach ($request->input('questions') as $questionData) {
-            $question = Question::create([
-                'quiz_id' => $quiz->id,
+            $question = $quiz->questions()->create([
                 'question' => $questionData['question'],
                 'correct' => $questionData['correct'],
             ]);
 
             foreach ($questionData['options'] as $key => $choice) {
-                Choice::create([
-                    'question_id' => $question->id,
+                $question->choices()->create([ 
                     'choice_key' => $key,
                     'choice' => $choice,
                     'is_correct' => $questionData['correct'] == $key,
@@ -163,7 +159,7 @@ class QuizController extends Controller
             }
         }
 
-        return redirect('/admin/quizzes')->with('success', 'Quiz successfully created');
+        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz successfully created');
     }
 
     public function edit($id)
@@ -196,12 +192,12 @@ class QuizController extends Controller
             }
         }
         
-        return redirect('/admin/quizzes')->with('success', 'Quiz updated successfully');
+        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz updated successfully');
     }
 
     public function destroy(Quiz $quiz)
     {
         $quiz->delete();
-        return redirect('/admin/quizzes')->with('success', 'Quiz berhasil dihapus');
+        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz berhasil dihapus');
     }
 }

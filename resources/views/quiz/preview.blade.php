@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- Keep extending layouts.app --}}
+@extends('layouts.app')
 
 @section('title', 'Preview Quiz - QuizQuest')
 
@@ -7,34 +7,30 @@
 body {
     background: linear-gradient(to right, var(--bright1), var(--bright2)) !important;
     color: var(--dark4) !important;
-    min-height: 100vh;
+}
+
+.content-wrapper {
+    width: 100%;
+    padding: 3rem 1rem;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
     align-items: center;
-    padding: 0;
-    margin: 0;
 }
 
 .create-quiz-title { 
     text-align: center;
     margin-bottom: 2rem;
-    margin-top: 2rem;
     color: var(--dark3);
 }
 
 .quiz-form {
     background-color: white;
     padding: 2rem;
-    max-width: 1000px;
-    min-width: 600px;
+    max-width: 700px;
     width: 100%;
     margin: 0 auto;
     border-radius: 12px;
     box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
 }
 
 .form-group {
@@ -49,206 +45,131 @@ body {
 }
 
 .form-group input[type="text"],
-.form-group textarea,
-.form-group select {
+.form-group textarea {
     width: 100%;
     padding: 0.8rem;
     border-radius: 8px;
     border: 1px solid var(--bright3);
-    background-color: white;
+    background-color: #e9ecef;
     color: var(--dark4);
-    box-sizing: border-box;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    margin-bottom: 0.5rem;
+    cursor: not-allowed;
 }
 
-.form-group button {
-    background-color: var(--dark2);
-    color: white;
+.info-display {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--bright3);
+    background-color: #e9ecef;
+    color: var(--dark4);
+    margin-top: 0;
+    min-height: calc(1.5em + 1.6rem + 2px);
+}
+
+.button-group {
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 2rem;
+}
+
+.button-link {
+    display: inline-block;
     padding: 0.8rem 1.6rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Quicksand', sans-serif;
     transition: 0.3s ease;
 }
 
-.form-group button:hover {
-    background-color: var(--dark3);
+.button-link.primary {
+    background-color: var(--dark2);
+    color: white;
+}
+.button-link.primary:hover {
+    background-color: var(--dark1);
 }
 
-.form-group button[type="button"] {
-    background-color: var(--bright3);
-    color: var(--dark4);
+.button-link.secondary {
+    background-color: #6c757d;
+    color: white;
+}
+.button-link.secondary:hover {
+    background-color: #5a6268;
 }
 
-.form-group button[type="button"]:hover {
-    background-color: var(--bright2);
-}
-
-.question-section {
-    margin-top: 2rem;
-    max-height: 200px;
-    overflow-y: auto;
-    padding-right: 0.3rem;
-    scrollbar-width: thin;
-    scrollbar-color: var(--bright2) transparent;
-    border: 1px solid var(--bright3);
-    border-radius: 8px;
-    background-color: #f4fefe;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.question-section::-webkit-scrollbar {
-    width: 6px;
-}
-
-.question-section::-webkit-scrollbar-thumb {
-    background-color: var(--bright2);
-    border-radius: 10px;
-}
-
-.question-box {
-    width: 100%;
-    flex-shrink: 0;
-    padding: 1rem;
-    margin-bottom: 1.2rem;
-    border-bottom: 1px solid var(--bright3);
-    color: var(--dark2);
-    box-sizing: border-box;
-}
-
-.question-box:last-child {
-    border-bottom: none;
-}
-
-.question-box label {
-    color: var(--dark2);
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-}
-
-.question-textarea {
-    width: 100%;
-    min-height: 50px;
-    max-height: 100px;
-    resize: vertical;
-    padding: 0.6rem;
-    border-radius: 8px;
-    border: 1px solid var(--bright3);
-    background-color: white;
-    color: var(--dark4);
-    box-sizing: border-box;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    margin-bottom: 0.5rem;
-}
-
-.options-textarea {
-    width: 100%;
-    min-height: 30px;
-    max-height: 60px;
-    resize: vertical;
-    padding: 0.6rem;
-    border-radius: 8px;
-    border: 1px solid var(--bright3);
-    background-color: white;
-    color: var(--dark4);
-    box-sizing: border-box;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    margin-bottom: 0.5rem;
-}
-
-/* Dark Mode Styles */
+/* Dark Mode */
 body.dark-mode {
     background: linear-gradient(to right, var(--dark2), var(--dark3)) !important;
     color: var(--bright1) !important;
 }
-
 body.dark-mode .create-quiz-title {
     color: var(--bright1);
-    margin-top: 2rem;
 }
-
 body.dark-mode .quiz-form {
     background-color: var(--dark4);
     color: var(--bright1);
-    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.5);
 }
-
 body.dark-mode .form-group label {
     color: var(--bright1);
 }
-
 body.dark-mode .form-group input[type="text"],
 body.dark-mode .form-group textarea,
-body.dark-mode .form-group select {
+body.dark-mode .info-display {
     background: var(--dark3);
     color: var(--bright1);
     border: 1px solid var(--dark2);
 }
-
-body.dark-mode .question-section {
-    background: var(--dark3);
-    color: var(--bright1);
-    border: 1px solid var(--dark2);
+body.dark-mode .button-link.primary {
+    background: var(--bright2);
+    color: var(--dark4);
 }
-
-body.dark-mode .question-box label {
-    color: var(--bright1);
+body.dark-mode .button-link.primary:hover {
+    background: var(--bright1);
 }
-
-body.dark-mode .question-textarea,
-body.dark-mode .options-textarea {
-    background: var(--dark3);
-    color: var(--bright1);
-    border: 1px solid var(--dark2);
-}
-
-body.dark-mode .form-group button {
+body.dark-mode .button-link.secondary {
     background: var(--dark2);
     color: var(--bright1);
 }
-
-body.dark-mode .form-group button:hover {
+body.dark-mode .button-link.secondary:hover {
     background: var(--dark1);
 }
 </style>
 @endpush
 
 @section('content')
-<h1 class="create-quiz-title">Preview Quiz</h1>
+<div class="content-wrapper"> 
+    <h1 class="create-quiz-title">Preview Quiz</h1>
 
-<div class="quiz-form">
-    <div class="form-group">
-      <label for="title">Quiz Title</label>
-      <input type="text" id="title" name="title" disabled value="{{ $quiz->title }}">
+    <div class="quiz-form">
+        <div class="form-group">
+            <label for="title">Quiz Title</label>
+            <input type="text" id="title" readonly value="{{ $quiz->title }}">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Quiz Description</label>
+            <textarea id="description" readonly>{{ $quiz->description }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="question_count">Jumlah Soal</label>
+            <p id="question_count" class="info-display">{{ $question_count }} Soal</p>
+        </div>
+
+        <div class="button-group">
+            @if (!Auth::user()->is_admin)
+                <a href="{{ route('quiz.start', $quiz->id) }}" class="button-link primary">Start Quiz</a>
+            @endif
+            
+            <a href="{{ Auth::user()->is_admin ? route('admin.quizzes.index') : url('/user/browse') }}" class="button-link secondary">
+                Back
+            </a>
+        </div>
     </div>
-
-    <div class="form-group">
-      <label for="description">Quiz Description</label>
-      <textarea id="description" name="description" disabled>{{ $quiz->description }}</textarea>
-    </div>
-
-    <div class="form-group">
-        <label for="question_count">Jumlah Soal</label>
-        <input type="number" id="question_count" name="question_count" disabled value="{{ $question_count }}">
-    </div>
-
-    <div class="form-group" style="text-align: center; display: flex; justify-content: center; gap: 40px">
-    @if (!Auth::user()->is_admin)
-        <button type="submit">Start Quiz</button>  {{-- apabila admin yang lihat tdk ada tombol start --}}
-    @endif
-    
-    <a href="{{ Auth::user()->is_admin ? route('admin.quizzes.index') : url('/browse') }}">
-        <button type="button">Back</button>
-    </a>
-</div>
 </div>
 @endsection

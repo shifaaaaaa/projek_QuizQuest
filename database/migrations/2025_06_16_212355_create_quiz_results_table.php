@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('score')->default(0);
             $table->integer('total_questions');
             $table->integer('correct_answers')->default(0);
-            $table->json('answers'); // Menyimpan jawaban user
+            $table->json('answers')->nullable(); // Menyimpan jawaban user
             $table->integer('time_taken')->nullable(); // dalam detik
             $table->timestamp('completed_at');
             $table->timestamps();
