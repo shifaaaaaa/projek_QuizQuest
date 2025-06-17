@@ -3,6 +3,9 @@
 @section('title', 'Browse Quizzes - QuizQuest')
 
 @push('styles')
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 <style>
   
   body {
@@ -80,9 +83,14 @@
     color: #ccc;
   }
   
+.quiz-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
   .quiz-actions button, .quiz-actions .button-link {
-    flex: 1;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -140,6 +148,29 @@
   body.dark-mode .create-new a.button-link:hover {
     background: var(--bright1);
   }
+
+.start-quiz { background: var(--dark1); color: #ffffff; }
+.start-quiz:hover { background: var(--dark2); }
+body.dark-mode .start-quiz { background: var(--bright2); color: var(--dark4); }
+body.dark-mode .start-quiz:hover { background: var(--bright1); }
+
+.view-score { background: #28a745; color: #ffffff; }
+.view-score:hover { background: #218838; }
+body.dark-mode .view-score { background: #32c85a; color: #ffffff; }
+body.dark-mode .view-score:hover { background: #28a745; }
+
+.completed-badge {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+body.dark-mode .completed-badge {
+    color: #32c85a;
+}
+
 </style>
 @endpush
 
@@ -147,13 +178,28 @@
 <h1 class="manage-quizzes-title">Browse Quizzes</h1>
 
 <div class="quiz-list">
-    {{-- Assuming $quizzes is passed from the controller --}}
         @forelse ($quizzes ?? [] as $quiz)
         <div class="quiz-card">
-            <h3>{{ $quiz->title ?? 'Sample Quiz Title' }}</h3>
-            <p>{{ $quiz->description ?? 'Sample quiz description.' }}</p>
+            <div>
+                <h3>{{ $quiz->title }}</h3>
+                <p>{{ Str::limit($quiz->description, 120) }}</p>
+            </div>
             <div class="quiz-actions">
-                <a href="{{ route('quiz.preview', ['id' => $quiz->id]) }}" class="button-link view">View</a>
+                @if(isset($userResults[$quiz->id]))
+                    {{-- quiz done --}}
+                    <span class="completed-badge">
+                        <i class="fas fa-check-circle"></i> Selesai
+                    </span>
+                    <a href="{{ route('quiz.result', $userResults[$quiz->id]) }}" class="button-link view-score">
+                        Lihat Skor
+                    </a>
+                @else
+                    {{-- quiz blm dikerjain --}}
+                    <span>&nbsp;</span> 
+                    <a href="{{ route('quiz.preview', $quiz->id) }}" class="button-link start-quiz">
+                        Start Quiz
+                    </a>
+                @endif
             </div>
         </div>
     @empty
