@@ -66,20 +66,21 @@
 @section('content')
 
 <h1 class="admin-panel-title">Admin Control Panel</h1>
+
 <div class="admin-container">
   <div class="admin-section">
     <h2>Manage Quizzes</h2>
-    <button onclick="window.location.href='{{ url('/admin/quizzes') }}'">Open Quiz Manager</button>
+    <button onclick="window.location.href='{{ route('admin.quizzes.index') }}'">Open Quiz Manager</button>
   </div>
 
   <div class="admin-section">
     <h2>Set Game Rules</h2>
-    <button onclick="window.location.href='{{ url('/admin/rules') }}'">Configure Rules</button> {{-- Assuming a route --}}
+    <button onclick="window.location.href='{{ route('admin.rules.index') }}'">Configure Rules</button>
   </div>
 
   <div class="admin-section">
     <h2>Manage Users</h2>
-    <button onclick="window.location.href='{{ url('/admin/users') }}'">Open User Manager</button> {{-- Assuming a route --}}
+    <button onclick="window.location.href='{{ route('admin.users.index') }}'">Open User Manager</button>
   </div>
 
   <div class="warning">

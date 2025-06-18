@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\QuizResult;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SettingController; 
 use Illuminate\Support\Facades\DB;
 
 /*
@@ -184,10 +186,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return view('admin.dashboard');
     })->name('dashboard');
 
-    Route::get('/quizzes', [QuizController::class, 'index'])->name('quizzes.index');
-    Route::get('/quizzes/create', [QuizController::class, 'create'])->name('quizzes.create');
-    Route::post('/quizzes', [QuizController::class, 'store'])->name('quizzes.store');
-    Route::get('/quizzes/{id}/edit', [QuizController::class, 'edit'])->name('quizzes.edit');
-    Route::put('/quizzes/{id}', [QuizController::class, 'update'])->name('quizzes.update');
-    Route::delete('/quizzes/{quiz}', [QuizController::class, 'destroy'])->name('quizzes.destroy');
+    Route::resource('quizzes', QuizController::class)->except(['show']);
+    Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
+    Route::get('rules', [SettingController::class, 'index'])->name('rules.index');
+    Route::post('rules', [SettingController::class, 'store'])->name('rules.store');
 });
