@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Models\QuizResult;
 use App\Http\Controllers\QuizController;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,7 +97,21 @@ Route::post('/logout', function (Request $request) {
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
-        return view('dashboarduser');
+        $user = Auth::user();
+        
+        $results = QuizResult::where('user_id', $user->id)->get();
+        
+        $quizzesTaken = $results->count();
+        $averageScore = $results->avg('score');
+        $highestScore = $results->max('score');
+        $totalCorrectAnswers = $results->sum('correct_answers');
+
+        return view('dashboarduser', [
+            'quizzesTaken' => $quizzesTaken,
+            'averageScore' => round($averageScore, 2),
+            'highestScore' => $highestScore ?? 0,
+            'totalCorrectAnswers' => $totalCorrectAnswers,
+        ]);
     })->name('dashboard');
 
     Route::get('/profile', function () {
@@ -128,23 +144,19 @@ Route::middleware('auth')->group(function () {
     })->name('settings.update');
 
     Route::get('/leaderboard', function () {
-        $leaders = collect([
-            (object)['name' => 'Layla', 'score' => 900],
-            (object)['name' => 'Nara', 'score' => 9500],
-            (object)['name' => 'Zaki', 'score' => 9400],
-            (object)['name' => 'Rendi', 'score' => 9200],
-            (object)['name' => 'Maya', 'score' => 9100],
-            (object)['name' => 'Alice', 'score' => 1000],
-            (object)['name' => 'Bob', 'score' => 950],
-            (object)['name' => 'Charlie', 'score' => 900],
-            (object)['name' => 'Diana', 'score' => 870],
-            (object)['name' => 'Ethan', 'score' => 850],
-            (object)['name' => 'Fiona', 'score' => 830],
-            (object)['name' => 'George', 'score' => 800],
-            (object)['name' => 'Hannah', 'score' => 780],
-            (object)['name' => 'Ian', 'score' => 750],
-            (object)['name' => 'Julia', 'score' => 720],
-        ])->sortByDesc('score')->values();
+        $leaders = User::select(
+            'users.id', 
+            'users.name', 
+            'users.username', 
+            DB::raw('SUM(scores.max_score) as total_score')
+        )
+        ->join(DB::raw('(SELECT user_id, quiz_id, MAX(score) as max_score FROM quiz_results GROUP BY user_id, quiz_id) as scores'), function($join) {
+            $join->on('users.id', '=', 'scores.user_id');
+        })
+        ->groupBy('users.id', 'users.name', 'users.username')
+        ->orderBy('total_score', 'desc')
+        ->take(10) 
+        ->get();
 
         return view('leaderboard', ['leaders' => $leaders]);
     })->name('leaderboard');
@@ -152,11 +164,12 @@ Route::middleware('auth')->group(function () {
     // Quiz user routes
     Route::get('/browse', [QuizController::class, 'index'])->name('user.browse');
     Route::get('/quiz/{id}/preview', [QuizController::class, 'preview'])->name('quiz.preview');
-    Route::get('/quizzes/{quiz}/start', [QuizController::class, 'start'])->name('quiz.start')->middleware('auth');
+    Route::get('/quizzes/{quiz}/start', [QuizController::class, 'start'])->name('quiz.start');
     Route::post('/quiz/{id}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
     Route::get('/quiz/result/{id}', [QuizController::class, 'result'])->name('quiz.result');
     Route::get('/history', [QuizController::class, 'history'])->name('user.history');
 });
+
 
 /*
 |--------------------------------------------------------------------------

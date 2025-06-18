@@ -13,15 +13,17 @@ class QuizController extends Controller
 {
     public function index()
     {
-        $quizzes = Quiz::latest()->get();
+        $quizzes = Quiz::all();
 
-        if (Auth::user()->is_admin) {
-            return view('admin.quizzes.index', compact('quizzes'));
+        if (auth()->user()->is_admin) {
+            return view('admin.quizzes.index', ['quizzes' => $quizzes]);
+        } else {
+            return view('user.browse', ['quizzes' => $quizzes]);
         }
 
-        $userResults = QuizResult::where('user_id', Auth::id())
-                                 ->pluck('id', 'quiz_id');
-
+        $userResults = QuizResult::where('user_id', Auth::id())->pluck('id', 'quiz_id');
+        dd($userResults);
+        
         return view('user.browse', [
             'quizzes' => $quizzes,
             'userResults' => $userResults
