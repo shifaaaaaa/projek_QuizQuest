@@ -186,6 +186,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return view('admin.dashboard');
     })->name('dashboard');
 
+    Route::get('/rules', function() {
+        return "Halaman 'Set Game Rules' berhasil diakses!";
+    })->name('rules.index');
+
     Route::resource('quizzes', QuizController::class)->except(['show']);
     Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
     Route::get('rules', [SettingController::class, 'index'])->name('rules.index');
