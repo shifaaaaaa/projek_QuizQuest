@@ -8,8 +8,8 @@
 
     @if (Auth::user()->is_admin)
         <a href="{{ route('admin.quizzes.index') }}">📝 Manage Quiz</a> 
-        <a href="{{ url('/setgame') }}">🎮 Set Game Rules </a>
-        <a href="{{ url('/manageuser') }}">👥 Manage User</a>   
+        <a href="{{ route('admin.rules.index') }}">🎮 Set Game Rules </a>
+        <a href="{{ route('admin.users.index') }}">👥 Manage User</a>   
         @endif
     
     <a href="{{ url('/profile') }}">👤 Profile</a>

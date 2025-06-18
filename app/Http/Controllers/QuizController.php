@@ -11,22 +11,21 @@ use Illuminate\Support\Facades\Auth;
 
 class QuizController extends Controller
 {
-    public function index()
-    {
-        $quizzes = Quiz::all();
+    public function index(){
+        $quizzes = Quiz::orderBy('created_at', 'desc')->get();
+        
+        $user = Auth::user();
+        $completedQuizzes = [];
 
-        if (auth()->user()->is_admin) {
-            return view('admin.quizzes.index', ['quizzes' => $quizzes]);
-        } else {
-            return view('user.browse', ['quizzes' => $quizzes]);
+        if ($user) {
+            $completedQuizzes = QuizResult::where('user_id', $user->id)
+                                        ->get()
+                                        ->keyBy('quiz_id');
         }
 
-        $userResults = QuizResult::where('user_id', Auth::id())->pluck('id', 'quiz_id');
-        dd($userResults);
-        
         return view('user.browse', [
             'quizzes' => $quizzes,
-            'userResults' => $userResults
+            'completedQuizzes' => $completedQuizzes
         ]);
     }
 
