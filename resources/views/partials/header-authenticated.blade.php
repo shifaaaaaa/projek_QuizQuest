@@ -17,19 +17,22 @@
         <!-- User Dropdown -->
         <div class="dropdown" style="position: relative; display: inline-block;">
             <button class="dropdown-btn" onclick="toggleDropdown()" style="
-                background: rgba(255, 255, 255, 0.1);
+                background: rgb(4, 147, 155);
                 color: white;
                 border: none;
-                padding: 0.5rem 1rem;
-                border-radius: 0.5rem;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 0.5rem;
+                justify-content: center;
                 font-weight: 500;
-                transition: background 0.3s ease;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                transition: background 0.3s ease, transform 0.1s ease;
+                outline: none;
             ">
-                👤 Account
+                 👤
                 <span class="dropdown-arrow" style="transition: transform 0.3s ease; color: white; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;"></span>
             </button>
 
