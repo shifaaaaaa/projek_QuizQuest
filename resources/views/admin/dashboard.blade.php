@@ -4,45 +4,37 @@
 
 @push('styles')
 <style>
-  body {
-    margin: 0;
-    color: white !important;
-    background: linear-gradient(to right, var(--dark3), var(--dark4)) !important;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-family:'Quicksand', sans-serif;
-}
-
-
   .admin-panel-title { 
     text-align: center;
     margin-top: 2rem;
     margin-bottom: 2rem;
-    color: white; 
   }
+  /* Menggunakan variabel warna agar bisa berganti tema */
+  body.dark-mode .admin-panel-title { color: white; }
+  body:not(.dark-mode) .admin-panel-title { color: var(--dark4); }
 
   .admin-container {
-    background-color: var(--dark2);
+    background-color: white;
     padding: 2rem;
     border-radius: 12px;
     max-width: 800px;
     margin: auto;
-    flex: 1; 
   }
-
+  body.dark-mode .admin-container {
+    background-color: var(--dark2);
+  }
 
   .admin-section {
     margin-bottom: 2rem;
   }
-
   .admin-section h2 {
     margin-bottom: 1rem;
-    color: var(--bright1);
   }
+  body:not(.dark-mode) .admin-section h2 { color: var(--dark3); }
+  body.dark-mode .admin-section h2 { color: var(--bright1); }
 
   .admin-section button {
-    background-color: var(--bright3);
+    background-color: var(--dark2);
     color: white;
     padding: 0.7rem 1.2rem;
     border: none;
@@ -50,23 +42,18 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-
   .admin-section button:hover {
-    background-color: var(--bright2);
+    filter: brightness(120%);
   }
-
-  .warning {
-    text-align: center;
-    color: #ffc107;
-    margin-top: 1rem;
+  body.dark-mode .admin-section button {
+    background-color: var(--bright3);
+    color: var(--dark4);
   }
 </style>
 @endpush
 
 @section('content')
-
 <h1 class="admin-panel-title">Admin Control Panel</h1>
-
 <div class="admin-container">
   <div class="admin-section">
     <h2>Manage Quizzes</h2>
@@ -81,10 +68,6 @@
   <div class="admin-section">
     <h2>Manage Users</h2>
     <button onclick="window.location.href='{{ route('admin.users.index') }}'">Open User Manager</button>
-  </div>
-
-  <div class="warning">
-    This page is restricted to administrators only.
   </div>
 </div>
 @endsection

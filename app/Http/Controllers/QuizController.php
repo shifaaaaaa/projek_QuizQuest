@@ -23,10 +23,8 @@ class QuizController extends Controller
                                         ->keyBy('quiz_id');
         }
 
-        return view('user.browse', [
-            'quizzes' => $quizzes,
-            'completedQuizzes' => $completedQuizzes
-        ]);
+        $quizzes = Quiz::withCount('questions')->latest()->get();
+        return view('admin.quizzes.index', compact('quizzes'));
     }
 
         public function preview($id)
@@ -54,6 +52,13 @@ class QuizController extends Controller
 
         return view('quiz.take', compact('quiz'));
     }
+
+    public function edit($id)
+{
+    $quiz = Quiz::with('questions.choices')->findOrFail($id);
+    return view('admin.quizzes.edit', compact('quiz'));
+}
+
 
     public function submit(Request $request, $id)
     {
@@ -163,37 +168,16 @@ class QuizController extends Controller
         return redirect()->route('admin.quizzes.index')->with('success', 'Quiz successfully created');
     }
 
-    public function edit($id)
+    public function update(Request $request, Quiz $quiz)
     {
-        $quiz = Quiz::with('questions.choices')->findOrFail($id);
-        return view('admin.quizzes.edit', compact('quiz'));
-    }
+    $validatedData = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+    ]);
 
-    public function update(Request $request, $id)
-    {
-        $quiz = Quiz::findOrFail($id);
-        $quiz->update([
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-        ]);
+    $quiz->update($validatedData);
 
-        $quiz->questions()->delete();
-
-        foreach ($request->input('questions') as $questionData) {
-            $question = $quiz->questions()->create([
-                'question' => $questionData['question'],
-            ]);
-
-            foreach ($questionData['options'] as $key => $choiceText) {
-                $question->choices()->create([
-                    'choice_key' => $key,
-                    'choice' => $choiceText,
-                    'is_correct' => ($questionData['correct'] == $key),
-                ]);
-            }
-        }
-        
-        return redirect()->route('admin.quizzes.index')->with('success', 'Quiz updated successfully');
+    return redirect()->route('admin.quizzes.edit', $quiz)->with('success', 'Quiz details updated successfully!');
     }
 
     public function destroy(Quiz $quiz)
@@ -201,5 +185,4 @@ class QuizController extends Controller
         $quiz->delete();
         return redirect()->route('admin.quizzes.index')->with('success', 'Quiz berhasil dihapus');
     }
-    //coba ini bisa ngga ya
 }

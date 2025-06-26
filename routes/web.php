@@ -6,10 +6,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Models\Quiz;
 use App\Models\QuizResult;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController; 
+use App\Http\Controllers\Admin\QuestionController;
 use Illuminate\Support\Facades\DB;
 
 /*
@@ -105,14 +107,20 @@ Route::middleware('auth')->group(function () {
         
         $quizzesTaken = $results->count();
         $averageScore = $results->avg('score');
-        $highestScore = $results->max('score');
+        $totalScore = $results->sum('score');
+
         $totalCorrectAnswers = $results->sum('correct_answers');
+        $totalQuestionsAnswered = $results->sum('total_questions');
+
+        $accuracy = $totalQuestionsAnswered > 0 ? ($totalCorrectAnswers / $totalQuestionsAnswered) * 100 : 0;
+        $recentQuizzes = Quiz::latest()->take(8)->get();
 
         return view('dashboarduser', [
             'quizzesTaken' => $quizzesTaken,
             'averageScore' => round($averageScore, 2),
-            'highestScore' => $highestScore ?? 0,
-            'totalCorrectAnswers' => $totalCorrectAnswers,
+            'totalScore' => $totalScore,
+            'accuracy' => round($accuracy),
+            'recentQuizzes' => $recentQuizzes,
         ]);
     })->name('dashboard');
 
@@ -194,4 +202,5 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
     Route::get('rules', [SettingController::class, 'index'])->name('rules.index');
     Route::post('rules', [SettingController::class, 'store'])->name('rules.store');
+    Route::post('/quizzes/{quiz}/questions', [QuestionController::class, 'store'])->name('questions.store');
 });
