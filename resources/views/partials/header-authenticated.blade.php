@@ -4,6 +4,10 @@
     </a>
     
     <nav style="display: flex; align-items: center; gap: 1.5rem;">
+        <span style="color: #FFD700; font-weight: bold;">
+    ⭐ Lv. {{ optional(Auth::user()->levelInfo)->level ?? 1 }}
+        </span>
+
         <span style="color: #7CD9CE; font-weight: 500;">Halo, {{ Auth::user()->name }}!</span>
         
         <a href="{{ url('/browse') }}" style="color: white; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">

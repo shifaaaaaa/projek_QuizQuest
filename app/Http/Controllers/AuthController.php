@@ -70,6 +70,13 @@ class AuthController extends Controller
             'is_admin' => false,
         ]);
 
+        $user->levelInfo()->create([
+        'level' => 1,
+        'xp' => 0,
+        ]);
+
+        dd($level);
+
         Auth::login($user); // langsung login setelah daftar
 
         return redirect()->route('dashboard')->with('success', 'Registrasi berhasil! Selamat datang!');

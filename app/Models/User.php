@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Quiz::class, 'quiz_user')->withTimestamps();
     }
+
+    public function levelInfo()
+    {
+        return $this->hasOne(UserLevel::class);
+    }
 }

@@ -54,10 +54,10 @@ class QuizController extends Controller
     }
 
     public function edit($id)
-{
-    $quiz = Quiz::with('questions.choices')->findOrFail($id);
-    return view('admin.quizzes.edit', compact('quiz'));
-}
+    {
+        $quiz = Quiz::with('questions.choices')->findOrFail($id);
+        return view('admin.quizzes.edit', compact('quiz'));
+    }
 
 
     public function submit(Request $request, $id)
@@ -101,6 +101,36 @@ class QuizController extends Controller
             'time_taken' => $timeTaken,
             'completed_at' => now()
         ]);
+
+        // XP & Level Update
+        $user = Auth::user();
+        $userLevel = $user->levelInfo;
+
+        if (!$userLevel) {
+            $userLevel = new \App\Models\UserLevel([
+                'level' => 1,
+                'xp' => 0,
+            ]);
+            $user->levelInfo()->save($userLevel);
+        }
+
+        $earnedXp = 250;
+        $userLevel->xp += $earnedXp;
+
+        $levelUp = false;
+        while ($userLevel->xp >= 100) {
+            $userLevel->level += 1;
+            $userLevel->xp -= 100;
+            $levelUp = true;
+        }
+
+        $userLevel->save();
+
+        // Kirim notifikasi ke session untuk tampil di view
+        session()->flash('earned_xp', $earnedXp);
+        if ($levelUp) {
+            session()->flash('level_up', true);
+        }
 
         return redirect()->route('quiz.result', $quizResult->id);
     }

@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController; 
 use App\Http\Controllers\Admin\QuestionController;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\LevelController;
 
 /*
 |-----------------
@@ -76,6 +77,11 @@ Route::post('/signup', function (Request $request) {
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'is_admin' => false,
+        ]);
+
+        $user->levelInfo()->create([
+            'level' => 1,
+            'xp' => 0,
         ]);
 
         Auth::login($user);
@@ -178,6 +184,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/quiz/{id}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
     Route::get('/quiz/result/{id}', [QuizController::class, 'result'])->name('quiz.result');
     Route::get('/history', [QuizController::class, 'history'])->name('user.history');
+    Route::get('/quiz/complete', [LevelController::class, 'complete'])->name('quiz.complete');
 });
 
 

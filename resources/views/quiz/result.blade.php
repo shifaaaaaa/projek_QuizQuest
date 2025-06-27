@@ -168,7 +168,19 @@ body.dark-mode .answer-incorrect {
 <div class="result-container">
     <div class="result-header">
         <h1>Hasil Quiz: {{ $result->quiz->title }}</h1>
-        
+
+        @if (session('earned_xp'))
+            <div style="background-color:rgb(201, 240, 129); color: #218838; padding: 1rem; margin-top: 1rem; border-left: 5px solidrgb(74, 206, 105); border-radius: 8px; font-weight: bold;">
+                🎉 Kamu mendapatkan +{{ session('earned_xp') }} XP!
+            </div>
+        @endif
+
+        @if (session('level_up'))
+            <div style="background-color:rgb(201, 240, 129); color: #856404; padding: 1rem; margin: 1rem 0; border-left: 5px solidrgb(241, 183, 7); border-radius: 8px; font-weight: bold;">
+                🚀 Selamat! Kamu naik level!
+            </div>
+        @endif
+
         @php
             $scoreClass = 'score-poor';
             $scoreText = 'Perlu Belajar Lagi';
@@ -183,7 +195,7 @@ body.dark-mode .answer-incorrect {
                 $scoreText = 'Not Bad';
             }
         @endphp
-        
+
         <div class="score-circle {{ $scoreClass }}">
             {{ $result->score }}%
         </div>
