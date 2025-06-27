@@ -219,6 +219,25 @@ body.dark-mode .form-group button {
 body.dark-mode .form-group button:hover {
     background: var(--dark1);
 }
+
+.form-group input[type="number"] {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--bright3);
+    background-color: white;
+    color: var(--dark4);
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+}
+
+body.dark-mode .form-group input[type="number"] {
+    background: var(--dark3);
+    color: var(--bright1);
+    border: 1px solid var(--dark2);
+}
+
+
 </style>
 @endpush
 
@@ -232,10 +251,15 @@ body.dark-mode .form-group button:hover {
       <input type="text" id="title" name="title" placeholder="Enter quiz title" value="{{ old('title') }}">
     </div>
 
-        <div class="form-group">
-            <label for="description">Quiz Description</label>
-            <textarea id="description" name="description" rows="3" placeholder="Enter quiz description">{{ old('description') }}</textarea>
-        </div>
+    <div class="form-group">
+      <label for="description">Quiz Description</label>
+      <textarea id="description" name="description" rows="3" placeholder="Enter quiz description">{{ old('description') }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="min_level">Minimum Level</label>
+      <input type="number" name="min_level" id="min_level" value="{{ old('min_level', $quiz->min_level ?? 1) }}" min="1">
+    </div>
 
     <div class="question-section" id="questions-container">
       <div class="question-box">

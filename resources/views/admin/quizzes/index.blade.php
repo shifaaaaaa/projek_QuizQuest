@@ -64,6 +64,7 @@
                 <tr>
                     <th>Quiz Title</th>
                     <th>Questions</th>
+                    <th>Min Level</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -75,13 +76,14 @@
                         <small style="opacity: 0.7;">{{ Str::limit($quiz->description, 70) }}</small>
                     </td>
                     <td>{{ $quiz->questions->count() }}</td>
+                    <td>{{ $quiz->min_level }}</td> <!-- Tambahan -->
                     <td>
                         <a href="{{ route('admin.quizzes.edit', $quiz) }}" class="action-btn">Edit & Manage</a>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="3" style="text-align: center; padding: 3rem;">
+                    <td colspan="4" style="text-align: center; padding: 3rem;">
                         Belum ada kuis yang dibuat. Silakan klik tombol "Create New Quiz".
                     </td>
                 </tr>

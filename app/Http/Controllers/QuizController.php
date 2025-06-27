@@ -40,8 +40,14 @@ class QuizController extends Controller
     public function start($id)
     {
         $quiz = Quiz::with('questions.choices')->findOrFail($id);
+        $user = Auth::user();
               
-        $existingResult = QuizResult::where('user_id', Auth::id())
+
+        if ($user->levelInfo && $user->levelInfo->level < $quiz->min_level) {
+        return redirect()->route('user.browse')->with('error', 'Level kamu belum cukup untuk mengakses quiz ini.'); 
+        }
+
+        $existingResult = QuizResult::where('user_id', $user->id)
                                       ->where('quiz_id', $id)
                                       ->first();
         
@@ -167,6 +173,7 @@ class QuizController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'questions' => 'required|array',
+            'min_level' => 'required|integer|min:1',
             'questions.*.question' => 'required|string',
             'questions.*.options.A' => 'required|string',
             'questions.*.options.B' => 'required|string',
@@ -178,6 +185,7 @@ class QuizController extends Controller
         $quiz = Quiz::create([
             'title' => $request->input('title'),
             'description' => $request->input('description'),
+            'min_level' => $request->input('min_level'),
         ]);
 
         foreach ($request->input('questions') as $questionData) {
@@ -203,6 +211,7 @@ class QuizController extends Controller
     $validatedData = $request->validate([
         'title' => 'required|string|max:255',
         'description' => 'nullable|string',
+        'min_level' => 'required|integer|min:1',
     ]);
 
     $quiz->update($validatedData);
@@ -219,8 +228,10 @@ class QuizController extends Controller
     
     public function browse()
     {
+        $user = Auth::user();
+        $userLevel = $user->levelInfo?->level ?? 1;
         $quizzes = Quiz::withCount('questions')->latest()->get();
-        return view('user.browse', compact('quizzes'));
+        return view('user.browse', compact('quizzes', 'userLevel'));
     }
 }
 

@@ -171,6 +171,19 @@
       color: #32c85a;
   }
 
+  .button-link.disabled {
+    background: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  body.dark-mode .button-link.disabled {
+      background: #444 !important;
+      color: #999 !important;
+  }
+
   </style>
   @endpush
 
@@ -184,6 +197,7 @@
                   <div class="quiz-card-content">
                       <h3>{{ $quiz->title }}</h3>
                       <p>{{ Str::limit($quiz->description, 120) }}</p>
+                      <p>Minimum Level: {{ $quiz->min_level }}</p>
                   </div>
                   <div class="quiz-actions">
                     @if(isset($completedQuizzes[$quiz->id]))
@@ -204,9 +218,15 @@
 
                         {{-- JIKA KUIS BELUM DIKERJAKAN --}}
                         <span>&nbsp;</span> 
-                        <a href="{{ route('quiz.preview', $quiz->id) }}" class="button-link start-quiz">
-                            Start Quiz
-                        </a>
+                        @if($userLevel >= $quiz->min_level)
+                            <a href="{{ route('quiz.preview', $quiz->id) }}" class="button-link start-quiz">
+                                Start Quiz
+                            </a>
+                        @else
+                            <button class="button-link start-quiz disabled" disabled title="Level {{ $quiz->min_level }} diperlukan">
+                                Start Quiz
+                            </button>
+                        @endif
 
                     @endif
                 </div>

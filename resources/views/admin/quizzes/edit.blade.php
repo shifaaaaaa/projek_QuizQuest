@@ -95,6 +95,10 @@
                 <label for="description" class="form-label">Description</label>
                 <textarea name="description" id="description" class="form-control" rows="3">{{ old('description', $quiz->description) }}</textarea>
             </div>
+            <div class="form-group">
+                <label for="min_level">Minimum Level</label>
+                <input type="number" name="min_level" id="min_level" class="form-control" value="{{ old('min_level', $quiz->min_level) }}" required min="1">
+            </div>
             <button type="submit" class="btn btn-primary">Update Details</button>
         </form>
     </div>
