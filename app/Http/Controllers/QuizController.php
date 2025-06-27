@@ -184,5 +184,14 @@ class QuizController extends Controller
     {
         $quiz->delete();
         return redirect()->route('admin.quizzes.index')->with('success', 'Quiz berhasil dihapus');
+
+    }
+    
+    public function browse()
+    {
+        $quizzes = Quiz::withCount('questions')->latest()->get();
+        return view('user.browse', compact('quizzes'));
     }
 }
+
+    

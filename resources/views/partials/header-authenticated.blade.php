@@ -131,7 +131,6 @@ function toggleDropdown() {
     }
 }
 
-// Close dropdown when clicking outside
 window.onclick = function(event) {
     if (!event.target.matches('.dropdown-btn') && !event.target.closest('.dropdown-btn')) {
         const dropdowns = document.getElementsByClassName("dropdown-content");

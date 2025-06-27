@@ -67,7 +67,7 @@ class AuthController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_admin' => false, // default user bukan admin
+            'is_admin' => false,
         ]);
 
         Auth::login($user); // langsung login setelah daftar

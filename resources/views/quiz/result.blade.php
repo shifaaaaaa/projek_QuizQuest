@@ -142,7 +142,6 @@ body {
     background: #5a6268;
 }
 
-/* Dark Mode */
 body.dark-mode {
     background: linear-gradient(to right, var(--dark2), var(--dark3)) !important;
     color: var(--bright1) !important;

@@ -39,10 +39,10 @@
     /* 2. MEMBUAT LAYOUT UTAMA DUA KOLOM */
     .dashboard-main-content {
         display: grid;
-        grid-template-columns: 35% 1fr; /* Kolom kiri lebih kecil (35%) */
-        gap: 2.5rem; /* Jarak antar kolom */
+        grid-template-columns: 35% 1fr;
+        gap: 2.5rem;
     }
-    /* Di layar kecil, kembali ke 1 kolom */
+
     @media (max-width: 992px) {
         .dashboard-main-content {
             grid-template-columns: 1fr;
@@ -57,16 +57,16 @@
     }
     /* 3. MEMBUAT KARTU STATISTIK LEBIH KECIL */
     .stat-card {
-        padding: 1.25rem; /* Padding lebih kecil */
+        padding: 1.25rem;
         border-radius: 12px;
         color: var(--dark4);
     }
     .stat-card .value {
-        font-size: 1.8rem; /* Ukuran font lebih kecil */
+        font-size: 1.8rem;
         font-weight: 700;
     }
     .stat-card .label {
-        font-size: 0.85rem; /* Ukuran font lebih kecil */
+        font-size: 0.85rem;
         font-weight: 500;
     }
     .stat-card.blue { background-color: #7CD9CE; }

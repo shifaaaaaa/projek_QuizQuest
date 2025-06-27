@@ -21,12 +21,11 @@
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    /* margin-bottom: 1rem; /* If it's not the main app header */
   }
 
   .profile-container {
     background-color: white;
-    color: var(--dark4); /* Text color for content inside profile container */
+    color: var(--dark4);
     margin: 2rem auto;
     padding: 2rem;
     border-radius: 12px;
@@ -35,8 +34,8 @@
     max-width: 600px;
   }
   body.dark-mode .profile-container {
-    background-color: var(--dark2); /* Dark mode background for container */
-    color: white; /* Text color for dark mode */
+    background-color: var(--dark2);
+    color: white;
   }
 
   .profile-header {

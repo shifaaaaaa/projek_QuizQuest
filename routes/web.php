@@ -15,9 +15,9 @@ use App\Http\Controllers\Admin\QuestionController;
 use Illuminate\Support\Facades\DB;
 
 /*
-|--------------------------------------------------------------------------
+|-----------------
 | Public Routes
-|--------------------------------------------------------------------------
+|-----------------
 */
 
 Route::get('/', function () {
@@ -94,9 +94,9 @@ Route::post('/logout', function (Request $request) {
 })->name('logout');
 
 /*
-|--------------------------------------------------------------------------
+|-------------------------------
 | User Routes (Auth Required)
-|--------------------------------------------------------------------------
+|-------------------------------
 */
 Route::middleware('auth')->group(function () {
 
@@ -172,7 +172,7 @@ Route::middleware('auth')->group(function () {
     })->name('leaderboard');
 
     // Quiz user routes
-    Route::get('/browse', [QuizController::class, 'index'])->name('user.browse');
+    Route::get('/browse', [QuizController::class, 'browse'])->name('user.browse');
     Route::get('/quiz/{id}/preview', [QuizController::class, 'preview'])->name('quiz.preview');
     Route::get('/quizzes/{quiz}/start', [QuizController::class, 'start'])->name('quiz.start');
     Route::post('/quiz/{id}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
@@ -182,9 +182,9 @@ Route::middleware('auth')->group(function () {
 
 
 /*
-|--------------------------------------------------------------------------
+|-----------------------------------------
 | Admin Routes (Auth + Admin Middleware)
-|--------------------------------------------------------------------------
+|-----------------------------------------
 */
 
 

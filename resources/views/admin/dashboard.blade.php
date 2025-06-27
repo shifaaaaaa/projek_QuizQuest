@@ -9,7 +9,6 @@
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
-  /* Menggunakan variabel warna agar bisa berganti tema */
   body.dark-mode .admin-panel-title { color: white; }
   body:not(.dark-mode) .admin-panel-title { color: var(--dark4); }
 

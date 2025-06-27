@@ -27,7 +27,7 @@
     .manage-quizzes-title {
       text-align: center;
       color: var(--dark3);
-      margin-top: 2rem;  /* Tambahan margin-top 2rem */
+      margin-top: 2rem;
       margin-bottom: 2rem;
     }
     body.dark-mode .manage-quizzes-title {
@@ -176,7 +176,7 @@
 
   @section('content')
   <div class="page-container">
-      <h1 class="browse-title">Browse Quizzes</h1>
+      <h1 class="browse-title"><br>Browse Quizzes<br><br></h1>
 
       <div class="quiz-list">
           @forelse ($quizzes as $quiz)
